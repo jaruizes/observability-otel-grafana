@@ -1,0 +1,60 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: otel-collector:4317
+
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: 'service-a'
+        scrape_interval: 2s
+        metrics_path: '/metrics/prometheus'
+        static_configs:
+          - targets: [ 'service-a:8080' ]
+      - job_name: 'service-b'
+        scrape_interval: 2s
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: [ 'service-b:8081' ]
+      - job_name: 'service-c'
+        scrape_interval: 2s
+        metrics_path: '/q/metrics'
+        static_configs:
+          - targets: [ 'service-c:8082' ]
+      - job_name: 'service-d'
+        scrape_interval: 2s
+        metrics_path: '/q/metrics'
+        static_configs:
+          - targets: [ 'service-d:8083' ]
+
+exporters:
+  otlp:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    tls:
+      insecure: true
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+
+service:
+  extensions: [health_check]
+  telemetry:
+    logs:
+      level: "debug"
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [prometheus]
+      processors: [batch]
+      exporters: [prometheusremotewrite]
