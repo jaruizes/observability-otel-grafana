@@ -42,7 +42,7 @@ generateData() {
   done
 
   i=0
-  while [ $i -ne 100 ]
+  while [ $i -ne 200 ]
   do
     RANDOM_NUMBER=$(($RANDOM%201-100))
     curl --silent --location --request POST 'http://localhost:8080/' --header 'Content-Type: application/json' --data-raw '{"initialValue":"'"$RANDOM_NUMBER"'"}' > /dev/null

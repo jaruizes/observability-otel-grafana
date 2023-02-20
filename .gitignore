@@ -42,3 +42,4 @@ $RECYCLE.BIN/
 /cloud/scenarios/retail/7.replicator/cluster_info.json
 /observability-project.iml
 /service-a/build/
+/service-a/src/*.js
